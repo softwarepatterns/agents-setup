@@ -1,4 +1,4 @@
-# softwarepatterns/skills
+# softwarepatterns/agents-setup
 
 Estate catalog of agent skills and OpenCode agents shared across machines and
 repos.

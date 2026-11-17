@@ -1,7 +1,7 @@
 # AGENTS.md
 
-Binding rules for `softwarepatterns/skills` — the estate catalog of shared
-agent skills (and, later, agents/profiles). The same four conventions apply
+Binding rules for `softwarepatterns/agents-setup` — the estate catalog of
+shared agent skills (and agents/profiles). The same four conventions apply
 across `~/Projects/softwarepatterns/*` (public, business) and
 `~/Projects/ironspecs/*` (personal, private). Reference files under
 `.agents/references/` carry the same authority as this file.

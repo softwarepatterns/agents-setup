@@ -70,7 +70,7 @@ two-segment form `vendor/skills/<owner>/<skill>/` is required.
 Every structural directory this catalog repo **owns** MUST contain a short
 `README.md` that states what the folder is for and the local rules as
 **(rule, rationale, examples)** tuples (see §1). Structural directories include
-at least: `vendor/`, `vendor/skills/`, `skills/`, `.agents/`,
+at least: `vendor/`, `vendor/skills/`, `skills/`, `agents/`, `.agents/`,
 `.agents/references/`, and each `vendor/skills/<github-owner>/`. Agents MUST
 add or update that README in the same change that creates or repurposes the
 folder. Agents MUST NEVER add estate READMEs inside a vendored skill package
@@ -84,7 +84,7 @@ without forking vendor bytes.
 Examples:
 
 - Good: `vendor/README.md`, `vendor/skills/README.md`, `skills/README.md`,
-  `vendor/skills/emilkowalski/README.md`
+  `agents/README.md`, `vendor/skills/emilkowalski/README.md`
 - Bad: no `README.md` under a new `vendor/agents/` structural folder
 - Bad: adding `vendor/skills/emilkowalski/animate/README.md` that we authored
   (that package is upstream; only upstream files belong there)
@@ -181,6 +181,9 @@ README.md
   references/
     README.md
     *.md                      # researched facts
+agents/
+  README.md                   # estate-owned OpenCode agents
+  <agent>.md
 skills/
   README.md                   # estate-owned skills
   <topic>/…/                  # optional topic grouping
@@ -198,8 +201,18 @@ OpenCode skill IDs are path-derived from the leaf directory that contains
 `SKILL.md` (see `.agents/references/opencode-skills.md`). Leaf skill directory
 names MUST stay unique across `skills/` and `vendor/skills/` combined.
 
-Migration and collection MUST move or copy bytes without rewriting skill
-bodies except when the task is explicitly to change skill content.
+Migration and collection MUST move or copy bytes without rewriting skill or
+agent bodies except when the task is explicitly to change that content.
+
+Estate OpenCode agent definitions MUST live under `agents/` as markdown agent
+files. Catalog agent payloads MUST NEVER live under `.agents/` in this repo.
+
+Rationale: Same catalog-vs-consumer split as skills; see `agents/README.md`.
+
+Examples:
+
+- Good: `agents/riker.md`, `agents/kino.md`
+- Bad: only copy under `.agents/agents/riker.md` as the shipped source
 
 ## Handoff checklist
 
@@ -218,3 +231,5 @@ Before finishing a task:
 8. Confirm every new or repurposed structural folder this repo owns has a
    short `README.md` with rule tuples; no estate README inside vendor skill
    packages.
+9. Confirm estate agents live under `agents/` (not `.agents/`), copied without
+   body rewrites unless the task is explicitly content work.

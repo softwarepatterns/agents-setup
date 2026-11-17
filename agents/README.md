@@ -9,6 +9,7 @@ ships them; it does not apply them to itself via `.agents/`.
 | --- | --- |
 | Collected from | `~/.config/opencode/agents/` on the authoring machine |
 | Files | `kino.md`, `lumen.md`, `rhyme.md`, `riker.md` |
+| References | `references/` — shipped operating docs (e.g. `git-remotes.md`) for consumers |
 | Not included | OpenCode built-ins (`build`, `plan`, `general`, `explore`); skill-nested `agents/` junk; `opencode.jsonc`; retired `teach` |
 
 ## Permissions (all estate agents)

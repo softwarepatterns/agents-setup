@@ -5,6 +5,7 @@ repos.
 
 - **Estate-owned skills:** `skills/`
 - **Estate-owned agents:** `agents/`
+- **Shipped agent references:** `agents/references/` (e.g. `git-remotes.md`)
 - **Vendored skills (upstream):** `vendor/skills/<github-owner>/` — see each owner's `README.md` for pins
 - **Law for work on this repo:** `AGENTS.md` and `.agents/references/`
 

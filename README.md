@@ -1,14 +1,14 @@
-# softwarepatterns/agents-setup
+# agents-setup
 
-Estate catalog of agent skills and OpenCode agents shared across machines and
-repos.
+A catalog of agent skills, OpenCode agents, and reference documents. Consumers
+install from here; this repo does not apply them to itself.
 
-- **Estate-owned skills:** `skills/`
-- **Estate-owned agents:** `agents/`
-- **Shipped agent references:** `agents/references/` (e.g. `git-remotes.md`)
-- **Vendored skills (upstream):** `vendor/skills/<github-owner>/` — see each owner's `README.md` for pins
-- **Law for work on this repo:** `AGENTS.md` and `.agents/references/`
+A skill written into one repo stays there; each new repo re-derives or drifts.
+One versioned source to install from: an `opencode.json` path, `npx skills
+add` with this repo's git URL, or a copy into `.agents/skills/`.
 
-This repository does not apply its skill or agent payloads to itself; consumers
-install from here into their own harness paths (e.g. `.agents/skills/`,
-`~/.config/opencode/agents/`).
+- **First-party skills:** `skills/`
+- **First-party OpenCode agents:** `agents/`
+- **References for consumers:** `agents/references/` (e.g. `git-remotes.md`)
+- **Vendored third-party skills:** `vendor/skills/<github-owner>/` — pinned version and provenance in each owner's `README.md`
+- **Rules for this repo:** `AGENTS.md` and `.agents/references/`

@@ -235,9 +235,9 @@ In particular:
 paths, or folders. It may only use ideas that belong to this specification's
 subject.
 
-Name related specifications in Design or Requirements when this subject depends
-on them (for example a shared drag-and-drop or paste policy). Non-goals are not
-an index of other documents and must not say where omitted work lives instead.
+Rationale: Non-goals bound this subject. Naming other files turns the section
+into an index and defines this page by what lives elsewhere. A refusal stated
+as a property of this subject stays meaningful on its own.
 
 Examples:
 
@@ -269,7 +269,7 @@ The headings have distinct purposes:
 
 - **Summary** gives a concise statement of the specification's subject and intended outcome. A reader should understand the central direction without first reading the entire document.
 - **Purpose and Motivation** explains why the specification exists, what problem or need it addresses, and why the subject matters.
-- **Scope** establishes what the specification covers and, where useful, what it does not cover. Identify the relevant system boundaries and affected areas. Non-goals follow §3.6: subject refusals only — not other files or where else work lives.
+- **Scope** establishes what the specification covers and, where useful, what it does not cover. Identify the relevant system boundaries and affected areas. Non-goals follow §3.6.
 - **Design** explains the accepted conceptual model, structure, approach, and important interactions. Give readers the understanding needed to interpret the requirements. This section describes the intended design, not incidental implementation details.
 - **Requirements** states the normative obligations. Use direct, precise, verifiable language. This section is the authoritative statement of required behavior and constraints.
 - **Considerations** explains relevant consequences, constraints, failure conditions, compatibility concerns, operational concerns, and other factors needed to understand or evaluate the design.

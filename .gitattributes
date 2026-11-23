@@ -1,0 +1,13 @@
+# Line endings are a property of the file, not the machine.
+# Everything git considers text is LF - in the repo and on disk, on every OS.
+* text=auto eol=lf
+
+# sops-encrypted dotenv payloads are text, but their parser rejects CRLF.
+*.enc text eol=lf
+
+# bash dies on CRLF, even on Windows.
+*.sh text eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf

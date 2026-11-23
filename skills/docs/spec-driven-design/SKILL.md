@@ -368,6 +368,8 @@ Prefer surgical edits. Preserve unrelated decisions and rationale.
 
 Restructure or rewrite a document when necessary to correct its organization, purpose, or meaning. Do not preserve obsolete or contradictory text merely to minimize the diff.
 
+Never rewrite a specification wholesale to make a targeted change. A full-file rewrite paraphrases every sentence it does not deliberately touch, and paraphrase silently drops content - rules, qualifiers, and rationale that were load-bearing. Default to edits; rewrite only with a diff review that proves no content was lost.
+
 When editing, also check whether the change affects:
 
 - The document's hierarchy level.

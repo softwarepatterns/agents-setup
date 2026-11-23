@@ -210,6 +210,8 @@ Requirements should be clear, necessary, consistent, and verifiable. Avoid vague
 
 Keep individual requirements focused. Do not fragment requirements unnecessarily.
 
+**Named, not numbered.** Requirements are named, not numbered, so citations stay stable as the document changes. Rationale: a number is an unstable identifier — one insertion renumbers every requirement after it, and every comment, test, or review that cited the old number now points at the wrong rule or at nothing. A name survives reordering. Examples: good — cite "Adapters live in the port" or "the batch law"; bad — cite "R7", which becomes "R8" after one edit and erodes trust in every document that referenced it.
+
 ### 3.5 Use examples carefully
 
 Include examples when examples help distinguish intended behavior from plausible alternatives.

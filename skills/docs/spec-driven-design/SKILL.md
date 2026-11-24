@@ -194,6 +194,16 @@ For example: authentication logic must remain independent of the HTTP framework.
 
 Not every statement needs a rationale. Definitions, background, diagrams, and straightforward requirements can stand on their own.
 
+### Write for retrieval
+
+Agents are probabilistic: a rule survives only if it is encountered and recognized at the moment of temptation. Write for that moment.
+
+**Compress.** Every sentence competes with every other sentence for a skimming reader; short documents get read and long ones get sampled. A sentence that neither states, justifies, nor demonstrates a rule is deleted. Compression is maintenance — the rule that fits in one paragraph is still intact a year later.
+
+**Dense keywords.** The rule's vocabulary recurs across the rule, its rationale, and its examples, and includes the words an agent has in mind at the moment of temptation: the library name, the flag, the synonym, the adjacent concept. "Detail override" catches the agent typing `detail`; "injection" catches the one constructing a string; "branch" catches the one adding a field. A rule stated once, under one name, is found by no one.
+
+**Name the outcomes.** Compliance and violation both have consequences, and naming them is rationale that retrieves. Comply: the response is a contract clients can rely on. Violate: the banned parameter is re-added, the schema leaks, the client breaks. The failure mode's name is the keyword an agent reaches for when the failure recurs — a rule that names its failure intercepts the next occurrence.
+
 ### Write clear requirements
 
 Use direct, normative language for mandatory behavior:

@@ -160,7 +160,7 @@ Common purposes include:
 
 A document may serve several purposes. Use the organization that makes the content easiest to understand and maintain. Do not create categories merely to classify documents.
 
-The purpose of a document and its hierarchy level are separate decisions. For example, a security constraint may be a product-wide principle, a pillar decision, or a feature-specific requirement.
+Purpose and hierarchy level are separate decisions: a security constraint may be a product-wide principle, a pillar decision, or a feature-specific requirement.
 
 ### Describe desired state
 
@@ -182,10 +182,6 @@ Important decisions should include their rationale.
 
 Explain why a decision exists, what problem the decision addresses, and which circumstances make the decision relevant. Use recognizable concepts and terminology throughout the prose so future agents can identify when the decision applies.
 
-Distribute important concepts naturally across the rule, rationale, and examples. Do not rely on a single occurrence of a term to communicate an important constraint.
-
-This is particularly important for agents with limited context and probabilistic instruction-following. Repeated, relevant concepts increase the likelihood that an agent recognizes and applies the intended decision.
-
 Do not create artificial keyword lists or require a formal rule/rationale/example tuple.
 
 Do not merely restate a rule as its rationale.
@@ -196,13 +192,13 @@ Not every statement needs a rationale. Definitions, background, diagrams, and st
 
 ### Write for retrieval
 
-Agents are probabilistic: a rule survives only if it is encountered and recognized at the moment of temptation. Write for that moment.
+Agents are probabilistic: a rule survives only if recognized at the moment of temptation. Write for that moment.
 
-**Compress.** Every sentence competes with every other sentence for a skimming reader; short documents get read and long ones get sampled. A sentence that neither states, justifies, nor demonstrates a rule is deleted. Compression is maintenance — the rule that fits in one paragraph is still intact a year later.
+**Compress.** Short documents get read; long ones get sampled. A sentence that neither states, justifies, nor demonstrates a rule is deleted.
 
-**Dense keywords.** The rule's vocabulary recurs across the rule, its rationale, and its examples, and includes the words an agent has in mind at the moment of temptation: the library name, the flag, the synonym, the adjacent concept. "Detail override" catches the agent typing `detail`; "injection" catches the one constructing a string; "branch" catches the one adding a field. A rule stated once, under one name, is found by no one.
+**Dense keywords.** The rule's vocabulary recurs across rule, rationale, and examples — including the words an agent holds at the moment of temptation: the library name, the flag, the synonym. "Detail override" catches the agent typing `detail`; "injection" catches the one constructing a string. A rule stated once, under one name, is found by no one.
 
-**Name the outcomes.** Compliance and violation both have consequences, and naming them is rationale that retrieves. Comply: the response is a contract clients can rely on. Violate: the banned parameter is re-added, the schema leaks, the client breaks. The failure mode's name is the keyword an agent reaches for when the failure recurs — a rule that names its failure intercepts the next occurrence.
+**Name the outcomes.** Comply: a contract clients rely on. Violate: the banned parameter is re-added, the schema leaks, the client breaks. The failure mode's name is the keyword an agent reaches for when the failure recurs.
 
 ### Write clear requirements
 
@@ -224,7 +220,7 @@ Requirements should be clear, necessary, consistent, and verifiable. Avoid vague
 
 Keep individual requirements focused. Do not fragment requirements unnecessarily.
 
-**Named, not numbered.** Requirements are named, not numbered, so citations stay stable as the document changes. Rationale: a number is an unstable identifier — one insertion renumbers every requirement after it, and every comment, test, or review that cited the old number now points at the wrong rule or at nothing. A name survives reordering. Examples: good — cite "Adapters live in the port" or "the batch law"; bad — cite "R7", which becomes "R8" after one edit and erodes trust in every document that referenced it.
+**Named, not numbered.** Requirements are named, not numbered, so citations stay stable as the document changes: a number is an unstable identifier — one insertion renumbers every requirement after it, and every comment, test, or review that cited the old number points at the wrong rule or at nothing. A name survives reordering. Good — cite "Adapters live in the port" or "the batch law"; bad — cite "R7", which becomes "R8" after one edit and erodes trust in every document that referenced it.
 
 ### Use examples carefully
 
@@ -306,31 +302,13 @@ Use this general order:
 4. Speculative ideas, hypotheses, and exploratory discussion.
 5. Unresolved questions.
 
-Apply this ordering within the required document structure:
-
-- Present the accepted design in **Design**.
-- State the authoritative obligations in **Requirements**.
-- Use **Considerations** to explain relevant consequences and constraints.
-- Use **Alternatives and Trade-offs** for meaningful alternatives, rejected approaches, and their trade-offs.
-- Keep unresolved decisions and speculative questions in **Open Questions**.
-
-Do not present a speculative approach as accepted design. Do not place an unresolved proposal among mandatory requirements.
+The required structure encodes the order: **Design** and **Requirements** carry accepted direction, **Considerations** carries consequences, **Alternatives and Trade-offs** carries the rejected, **Open Questions** carries the unresolved. Do not present a speculative approach as accepted design. Do not place an unresolved proposal among mandatory requirements.
 
 Where a section needs to discuss both established and uncertain material, use subheadings to distinguish the two. Put accepted decisions and established direction before exploratory discussion.
 
 ### Move material when confidence changes
 
-Ordering is an active maintenance responsibility.
-
-When a speculative idea becomes an accepted decision, move the decision into the appropriate higher-confidence section and update the relevant design and requirements.
-
-When a decision becomes uncertain, disputed, or invalidated, move the affected material out of the authoritative requirements and identify the unresolved decision.
-
-When new speculative material is added, place it below established direction.
-
-Do not leave material in chronological order merely because the material was added later.
-
-The objective is to make the strongest and most authoritative direction the first direction an agent encounters.
+Ordering is active maintenance. Promote accepted decisions into higher-confidence sections; demote uncertain, disputed, or invalidated material out of the authoritative requirements; place new speculation below established direction. Never leave material in chronological order because it was added later: the strongest direction is the first direction an agent encounters.
 
 ## Document organization
 

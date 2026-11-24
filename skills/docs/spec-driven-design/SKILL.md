@@ -134,7 +134,25 @@ Ask:
 
 Do not create documents solely to fill a level. A small product may have few pillars or capabilities. A capability may serve several pillars. The hierarchy should reflect actual decision scope, not an organizational ideal.
 
-## 3. Writing specifications
+## 3. Principles
+
+A principle is product law written for probabilistic agents who may read it once, partially, and under pressure.
+
+**Specific enough to judge on sight.** Given a real response, a real line of code, a real diff, the verdict is pass or fail without deliberation. Vague principles ("handle errors gracefully", "keep it simple") license everything and detect nothing; deviance becomes indistinguishable from compliance. Good: "Clients may only branch on `code`; providing any other variance in error responses is illegal," with the exact violating string (`"detail": "pq: duplicate key value violates unique constraint"`) beside the compliant one. Bad: "errors should be consistent and informative."
+
+**Verdicts in the imperative present, never self-argued.** A verdict followed by its defense reads as if the verdict needed defending, and what needs defending sounds negotiable. "Was rejected" reports a debate; "is banned" is law. Keep the rationale in its own sentence for the reader applying the rule's spirit; never fuse verdict and defense into one sentence. Good: "Occurrence-varying `detail` is banned: prose must not vary." Bad: "Occurrence-varying `detail` was rejected because prose that varies gets parsed and the scrutiny burden is lighter when nothing varies."
+
+**Never ban without the replacement.** Agents do not do well with a lack; a ban without a replacement leaves a vacuum the next agent fills with improvisation. The banned `detail` override was re-added repeatedly until the replacements were named. "Never do this" is half a law; "instead, do this" completes it. Good: "Instead of injecting the value into `detail`, add a catalog code; instead of diagnostics in the response, log them server-side." Bad: "Never inject dynamic content into error responses."
+
+**Never hedge.** Every hedge ("where possible", "generally", "preferably", "where the toolchain allows") is a hole in the rule, and an agent under pressure finds it and drives the feature through. A genuine exception is stated explicitly, scoped, and accepted (§2.5) — never smuggled in as a modal verb. Good: "Catalog literals are the only source, enforced with compile-time-constant types." Bad: "…enforced with compile-time-constant types where the toolchain allows."
+
+**Rationale and examples serve recognition, not persuasion.** The document does not make a point; it makes the medicine sweet. The why and the pass/fail pairs exist so the rule's keywords recur naturally across the prose — an agent who meets the concept anywhere meets the same verdict. Good: verdicts flanked by real violating strings and real call sites. Bad: a rationale that re-proves the rule.
+
+**Never list as open a question the document has answered.** An open question re-litigates the rule inside its own document. A violation is not a question; record it as a violation. A gap in enforcement is not a question; record it as a gap. Only genuinely undecided product decisions belong in Open Questions.
+
+---
+
+## 4. Writing specifications
 
 ### 3.1 Choose the purpose
 
@@ -249,7 +267,7 @@ Examples:
 
 Do not add empty sections or boilerplate simply to satisfy a template.
 
-## 4. Document structure and ordering
+## 5. Document structure and ordering
 
 ### 4.1 Required headings
 
@@ -271,7 +289,7 @@ The headings have distinct purposes:
 
 - **Summary** gives a concise statement of the specification's subject and intended outcome. A reader should understand the central direction without first reading the entire document.
 - **Purpose and Motivation** explains why the specification exists, what problem or need it addresses, and why the subject matters.
-- **Scope** establishes what the specification covers and, where useful, what it does not cover. Identify the relevant system boundaries and affected areas. Non-goals follow §3.6.
+- **Scope** establishes what the specification covers and, where useful, what it does not cover. Identify the relevant system boundaries and affected areas. Non-goals follow §4.6.
 - **Design** explains the accepted conceptual model, structure, approach, and important interactions. Give readers the understanding needed to interpret the requirements. This section describes the intended design, not incidental implementation details.
 - **Requirements** states the normative obligations. Use direct, precise, verifiable language. This section is the authoritative statement of required behavior and constraints.
 - **Considerations** explains relevant consequences, constraints, failure conditions, compatibility concerns, operational concerns, and other factors needed to understand or evaluate the design.
@@ -324,7 +342,7 @@ Do not leave material in chronological order merely because the material was add
 
 The objective is to make the strongest and most authoritative direction the first direction an agent encounters.
 
-## 5. Document organization
+## 6. Document organization
 
 ### 5.1 Keep documents understandable
 
@@ -360,7 +378,7 @@ Do not assume individually valid requirements form a valid system. Resolve contr
 
 Avoid creating registries, dependency graphs, or cross-reference systems unless the repository has a practical need for them.
 
-## 6. Editing specifications
+## 7. Editing specifications
 
 ### 6.1 Make focused changes
 
@@ -411,7 +429,7 @@ Do not combine specification changes with code changes merely to keep a feature 
 
 This separation makes the history auditable: reviewers can distinguish changes to intended behavior from changes that implement intended behavior.
 
-## 7. Implementing from specifications
+## 8. Implementing from specifications
 
 Before implementing a change:
 
@@ -436,7 +454,7 @@ If implementation work reveals a missing or incorrect decision, propose the deci
 
 Not every implementation detail needs a specification requirement. Specifications govern intended behavior, contracts, and meaningful constraints—not every line of code.
 
-## 8. Verification and review
+## 9. Verification and review
 
 Verification asks whether implementation satisfies the specification. Validation asks whether the specification describes the intended system.
 
@@ -467,7 +485,7 @@ Review specifications and implementations for:
 
 A specification review should establish whether the document is ready to guide implementation, not merely whether the document is well formatted.
 
-## 9. Enforcement
+## 10. Enforcement
 
 Skills provide guidance, not deterministic enforcement. Do not claim a skill can refuse or prevent an action unless the execution environment actually enforces that restriction.
 
@@ -502,7 +520,7 @@ Do not substitute mechanical keyword counts for semantic review. A vocabulary li
 
 A reviewer detects problems; a CI gate can block a change; permissions can prevent unauthorized edits. These are different levels of control.
 
-## 10. Agent responsibilities
+## 11. Agent responsibilities
 
 Agents must:
 
@@ -521,7 +539,7 @@ Agents must:
 
 Reviewers should evaluate the specification and implementation together, rather than treating passing tests as proof of correctness.
 
-## 11. Reference methods
+## 12. Reference methods
 
 Use established requirements-engineering practices where useful:
 

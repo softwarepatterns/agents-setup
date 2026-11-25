@@ -63,10 +63,11 @@ out=$(forgejo ... --wait-until '...' 2>/dev/null) || true
 ### Pin to head commit when needed
 
 After synchronize, wait for live reviews whose `commit_id` matches the new
-head (full 40-char SHA from the PR):
+head (full 40-char SHA from the PR). String literals are JSON inside
+backticks — quote them, or the predicate fails `wait_predicate_invalid`:
 
 ```bash
---wait-until 'length([?dismissed==`false` && commit_id==`abc…fullsha`]) >= `1`'
+--wait-until 'length([?dismissed==`false` && commit_id==`"e26c7e4a1b2c3d4e5f60718293a4b5c6d7e8f901"`]) >= `1`'
 ```
 
 ### APPROVED-only
@@ -74,7 +75,7 @@ head (full 40-char SHA from the PR):
 When the goal is approval, not merely "a review existed":
 
 ```bash
---wait-until 'length([?dismissed==`false` && state==`APPROVED`]) >= `1`'
+--wait-until 'length([?dismissed==`false` && state==`"APPROVED"`]) >= `1`'
 ```
 
 Combine with count ≥ 2 when two lenses must both approve.

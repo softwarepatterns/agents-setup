@@ -1,66 +1,111 @@
 ---
 name: forgejo
 description: >
-  Drive the estate's agent-first Forgejo API client - PR/issue/review
-  commands, --wait-until blocking reads, and the body-scanner gotcha. Use
-  when creating PRs, commenting, waiting on reviews, or reading commit
-  statuses from the forgejo CLI.
+  Drive the estate forgejo-cli: PR create/comment/review/merge, --wait-until
+  JMESPath (exit 28), dismiss-safe multi-reviewer waits, body-file and body
+  scanner, discovery before claiming missing. Use for Forgejo PRs, reviews,
+  comments, wait loops, or forgejo binary questions. Not git porcelain.
 ---
 
 # Forgejo CLI
 
-The `forgejo` binary is the estate's agent-first HTTP API client for Forgejo
-(the estate forgejo-cli product). It covers issues, pull requests, comments,
-reviews, and commit statuses. It is **not** git porcelain - clone, commit, and
-push stay with `git`.
+The `forgejo` binary is the estate **forgejo-cli** (HTTP API client). It covers
+issues, pull requests, comments, reviews, actions runs, packages. It is **not**
+git porcelain — clone, commit, push stay with `git`.
 
-## Verified (ran against forgejo.softwarepatterns.com, 2026-11-22/23)
+## Load order
 
-- **Output is JSON on stdout by default** (`--format json`; also `plain`,
-  `ids`). Structured errors go to stderr; exit codes are stable (see timeout
-  below). No TUI for normal API use.
-- **Create a PR:** `forgejo repos pulls create --owner O --repo R --body-file <path>`.
-  The body file is JSON: `{"base": "main", "head": "<branch>", "title": "...",
-  "body": "..."}`. The response is the full PR JSON, including `number`,
-  `html_url`, and `mergeable`.
-- **Comment on a PR:** PRs are issues for comment purposes.
-  `forgejo repos issues comments create --owner O --repo R --issue N --body-file <path>`
-  with body `{"body": "..."}`. List with `repos issues comments list`; delete
-  with `repos issues comments delete --issue N --comment <id>`.
-- **Block until a review lands:** `--wait-until '<JMESPath>'` works on
-  wait-eligible reads (not mutations - it is rejected there). It polls until
-  the expression evaluates to boolean `true`, prints the satisfying document
-  once on stdout, and exits 0. It keeps polling on `false`, `null`, and 404.
-  Timing comes from baked-in profiles (on the order of 30s interval / 10 min
-  timeout), not CLI flags. Timeout exits **28** with empty stdout.
-  Proven form for "next review on this PR":
-  `forgejo repos pulls reviews list --owner O --repo R --pull N --format json --wait-until 'length(@) > \`N\`'`
-- **The reviewer is the `forgejo-actions` account** (Forgejo Actions). Reviews
-  arrive as `REQUEST_CHANGES` or `APPROVED`, and the body ends with an HTML
-  comment pinning the reviewed head commit - new commits invalidate the old
-  review (`dismissed: true`, `stale: true`).
-- **Gotcha - the body scanner:** comment bodies whose markdown leans on inline
-  code backticks are rejected with
-  `{"type":"unknown","Portable shell scanner cannot analyze command: invalid-structure"}`.
-  Plain prose (numbered lists, no code spans) passes. Keep code out of comment
-  bodies or quote it minimally.
+1. This file (laws + default loop).
+2. WHEN waiting on reviews or CI → [references/wait-until.md](references/wait-until.md)
+3. WHEN creating/listing/merging PRs → [references/pull-requests.md](references/pull-requests.md)
+4. WHEN commenting or hitting scanner errors → [references/comments.md](references/comments.md)
+5. Consumer repo platform facts (tokens, runner, packages) stay in that repo's
+   `.agents/references/` — do not re-derive them here.
 
-## Documented (estate reference, not re-verified here)
+## Discovery law
 
-- Server web UI and API: `https://forgejo.softwarepatterns.com`. Git over SSH
-  is port **2222**. PRs and day-to-day work target Forgejo; GitHub (where a
-  mirror exists) is a mirror of `main`, not the work remote.
-- Command grammar is noun/verb from the Forgejo swagger
-  (`forgejo <noun> <verb>`, e.g. `repos pulls get`). `--help` per command lists
-  exact flags.
+BEFORE claiming the binary or a flag is missing, MUST run:
 
-## Typical agent workflow
+```bash
+command -v forgejo
+forgejo --version
+forgejo status
+forgejo <noun> <verb> --help
+```
 
-1. `git checkout -b <branch>`, commit, `git push -u origin <branch>`.
-2. `forgejo repos pulls create --body-file pr.json` -> PR number.
-3. `forgejo repos pulls reviews list --wait-until 'length(@) > \`0\`'` -> wait
-   for the first review.
-4. Read findings, fix, push, reply with
-   `forgejo repos issues comments create --body-file reply.json`.
-5. Repeat the wait with the count bumped (`> \`1\``, `> \`2\``, ...) until
-   APPROVED.
+NEVER invent curl-only or git-only Forgejo API workflows as a substitute without
+being asked. NEVER bury `forgejo` in a shell that discards stdout, stderr, or
+exit codes.
+
+## I/O law
+
+- JSON on **stdout** by default (`--format json`; also `plain`, `ids`).
+- Structured errors on **stderr**.
+- Grammar: `forgejo <noun> <verb>` from server swagger.
+- Global flags: `--server`, `--profile`, `--format`, `--api-version`, `--cacert`,
+  `--insecure`.
+- Pass `--owner` and `--repo` explicitly when profile defaults are null
+  (`forgejo config get`).
+
+## Wait law
+
+`--wait-until '<JMESPath>'` exists on wait-eligible **reads** only. Mutations
+reject it. Timeout exits **28** with empty stdout. Interval/timeout are
+baked-in (~30s / ~10 min), not CLI flags.
+
+MUST attach `--wait-until` to the forgejo process itself. NEVER wrap wait so
+errors disappear, then claim waiting is impossible.
+
+Default review wait uses **non-dismissed** rows (parallel dogfood + push make
+raw `length(@)` lie). Details: [references/wait-until.md](references/wait-until.md).
+
+## Merge law
+
+NEVER merge a pull request unless the user explicitly asks to merge. Open the
+PR, wait, fix, comment — stop before `repos pulls merge create`.
+
+## Body law
+
+Prefer `--body-file` with a JSON file. Heavy markdown inline code backticks in
+comment bodies trip the portable shell scanner. Plain prose passes. Details:
+[references/comments.md](references/comments.md).
+
+## Default agent loop
+
+```bash
+git checkout -b <branch>
+# commit…
+git push -u origin <branch>
+
+# pr.json: {"base":"main","head":"<branch>","title":"...","body":"..."}
+forgejo repos pulls create --owner O --repo R --body-file pr.json
+# read number from JSON stdout
+
+forgejo repos pulls reviews list --owner O --repo R --pull N --format json \
+  --wait-until 'length([?dismissed==`false`]) >= `1`'
+
+# fix, push, comment (see references/comments.md)
+# wait again; for two parallel reviewers use >= `2`
+# merge ONLY if the user said merge — see references/pull-requests.md
+```
+
+Estate auto-reviewer account is often `forgejo-actions`. Reviews carry
+`APPROVED` or `REQUEST_CHANGES`. New commits mark prior bot reviews
+`dismissed: true`, `stale: true`.
+
+## Anti-patterns (ban → replacement)
+
+| NEVER | Instead |
+|---|---|
+| Claim `forgejo` missing without `command -v` | Run discovery law |
+| Claim `--wait-until` impossible | `forgejo <cmd> --help`; use on reads; exit 28 = timeout |
+| `length(@) > N` after dismiss/parallel jobs | `length([?dismissed==\`false\`]) >= \`K\`` |
+| `repos pulls get --pull N` | `get` is `--base`+`--head`; number via create/list/reviews |
+| Merge without user ask | Stop after APPROVED; wait for "merge" |
+| Hand-roll curl for routine PR/review | `forgejo` noun/verb |
+| Hide wait in `$(...)` / pipes that drop exit | Run forgejo as the waited process |
+
+## Verified context
+
+Exercised against `https://forgejo.softwarepatterns.com` with forgejo-cli
+**0.3.0** (2026-11-22/23, 2026-11-25). Re-check `--help` after CLI upgrades.

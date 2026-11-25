@@ -165,6 +165,38 @@ Examples:
 - Good trigger: "OpenCode skill discovery, nested `SKILL.md` IDs, catalogs, or
   `skills` config paths → `.agents/references/opencode-skills.md`"
 
+### 7. Release tags (per skill / per thing)
+
+Memorable releases of an estate skill, agent, or other named catalog payload
+MUST be tagged `<thing>/vMAJOR.MINOR.PATCH` (optional `v` prefix on the
+semver segment is required as shown: `v` + semver). For estate skills,
+`<thing>` MUST be the leaf skill directory name (the OpenCode skill id)—the
+directory that contains `SKILL.md`—not a topic path and not the repo name.
+Agents MUST NEVER create new catalog-wide version tags of the form `vN.N.N`
+for skill releases. Historical tags `v0.1.0`–`v0.6.0` are legacy catalog-wide
+markers; they MUST NOT be used as the pattern for new skill releases.
+
+Rationale: Skills version independently. A single repo `vN.N.N` cannot say
+which skill moved. `<skill-id>/vN.N.N` is greppable, pushable, and matches
+how consumers name and pin one skill. Topic folders (`docs/`, `rust/`) are
+not identities; leaf ids are.
+
+Examples:
+
+- Good: `spec-driven-design/v0.7.0` on the commit that releases that skill
+- Good: `issue-management/v0.2.0` when only that skill changes
+- Good: `riker/v1.0.0` for an estate agent under `agents/` when agents are
+  tagged the same way
+- Bad: `v0.7.0` as a new skill release (catalog-wide; legacy only)
+- Bad: `docs/spec-driven-design/v0.7.0` (topic path is not the skill id)
+- Bad: `skills/spec-driven-design/v0.7.0` (path prefix noise)
+
+When releasing one skill, agents MUST tag the release commit with that
+skill's next `<skill-id>/vN.N.N` and MUST push the tag with the commit.
+Bump MINOR for meaningful skill behavior or law changes; PATCH for typos and
+non-behavioral fixes; MAJOR when consumers must treat the skill as
+incompatible.
+
 ## Deep reference
 
 ### Shipped for consumers (`agents/references/`)
@@ -258,3 +290,5 @@ Before finishing a task:
    packages.
 9. Confirm estate agents live under `agents/` (not `.agents/`), copied without
    body rewrites unless the task is explicitly content work.
+10. Confirm skill (or other payload) releases use `<thing>/vN.N.N` tags
+    (§7)—not new catalog-wide `vN.N.N` tags.

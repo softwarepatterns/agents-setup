@@ -99,7 +99,7 @@ Estate auto-reviewer account is often `forgejo-actions`. Reviews carry
 |---|---|
 | Claim `forgejo` missing without `command -v` | Run discovery law |
 | Claim `--wait-until` impossible | `forgejo <cmd> --help`; use on reads; exit 28 = timeout |
-| `length(@) > N` after dismiss/parallel jobs | `length([?dismissed==\`false\`]) >= \`K\`` |
+| `length(@) > N` after dismiss/parallel jobs | ``length([?dismissed==`false`]) >= `K``` |
 | `repos pulls get --pull N` | `get` is `--base`+`--head`; number via create/list/reviews |
 | Merge without user ask | Stop after APPROVED; wait for "merge" |
 | Hand-roll curl for routine PR/review | `forgejo` noun/verb |

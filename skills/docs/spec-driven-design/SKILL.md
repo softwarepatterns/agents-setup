@@ -9,74 +9,60 @@ description: Create, maintain, review, and implement software specifications. Us
 
 ## Purpose
 
-Specifications describe the intended system, independently of its implementation.
-
-Specifications preserve decisions and the reasoning behind those decisions so that different agents, working at different times, can reach consistent conclusions.
-
-The specification is authoritative for desired behavior. Implementation follows the specification; implementation behavior does not silently redefine it.
+Specifications are authoritative desired behavior, independent of implementation. They preserve decisions and rationale so agents stay consistent. Implementation follows the specification; implementation behavior does not silently redefine it.
 
 ## Repository conventions
 
-All specifications MUST be stored under `/specs`.
+All **specifications** MUST be stored under `./specs` in a product's root directory.
 
-Organize `/specs` into subfolders that group related material. Use the specification hierarchy described below to determine where documents belong.
+The **product root directory** is the root of the product the specifications describe. In a single-product repository, product root and repository root are the same, but in a monorepo each product will have its own product root.
 
-These are repository conventions, not requirements of specification engineering. Follow existing repository organization when it differs, except that specifications MUST remain under `/specs`.
+Organize `/specs` into subfolders that group related material. Do not group by type of file, only group by related content. Use pillar pages to help others navigate particular topics more effectively.
 
 Keep progress, implementation history, and current-state reporting outside desired-state specifications.
 
 ## Specification hierarchy
 
-Specifications form a hierarchy of authority and scope. Higher levels establish direction for lower levels. Lower levels apply that direction to increasingly specific parts of the system.
+Specifications form a hierarchy of authority and scope via folders. Higher levels establish direction for lower levels. Lower levels apply that direction to increasingly specific parts of the system.
 
-Use four levels.
+Specification pages will have one of the following goals:
 
-### Principles and positions
+- **Principle pages** establish product-wide direction.
+- **Pillar pages** describe a general product area, making navigation of the specifications easier.
+- **Capability pages** define a cross-product behavior across features.
+- **Feature pages** define specific product features and outcomes.
 
-Principles and positions establish product-wide direction.
+### Principle pages
 
-Use these specifications for decisions that apply broadly across the product, including fundamental values, architectural philosophy, design positions, and non-negotiable constraints:
+Principle pages establish product-wide direction, and include fundamental values, architectural philosophy, design positions, and non-negotiable constraints.
 
 - Privacy and data ownership.
 - Security philosophy.
 - Compatibility policy.
-- Architectural principles.
-- Product-wide technology constraints.
-- General user experience positions.
+- Promoted or banned software patterns.
+- Technology constraints.
+- User experience approach.
 
-Principles and positions establish defaults for the entire product. Lower-level specifications MUST follow these decisions unless an explicit exception is justified and accepted.
+Principles establish defaults for the entire product. Lower-level specifications MUST follow these decisions unless an explicit exception is justified and accepted.
 
-### Pillars
+IMPORTANT: All rules must be falsifiable, capable of being validated. The validation and violations of named principles must be unambiguous.
 
-Pillars establish direction for major product or system areas.
+### Pillar pages
 
-A pillar interprets product-wide principles within a particular domain and provides direction for the specifications beneath it:
+Pillars describe a general product area, making navigation of the specifications easier. They may provide historical context, explain how principles apply within its area, or point to notable specific features or capabilities.
 
-- Identity and accounts.
-- Data management.
-- Rendering.
-- Synchronization.
-- Billing.
-- Developer experience.
-
-A pillar may establish decisions that apply across multiple capabilities and features.
-
-Pillars are not merely indexes or collections of links. A pillar MUST contain meaningful direction for its subject area.
+A pillar page must not introduce new principles, new features or new capabilities on its own, but may reference relevant pages that do.
 
 ### Capabilities
 
 Capabilities describe reusable system behavior, contracts, or facilities that may be used by multiple features or pillars:
 
-- Authentication sessions.
-- File storage.
+- Logging
+- Authorization and authentication sessions.
+- General file storage.
+- Caching.
 - Notification delivery.
-- Authorization.
-- Data synchronization.
 - Event processing.
-
-A capability may belong to one pillar or serve several pillars. Do not force capabilities into a strictly tree-shaped organization when the system has legitimate cross-cutting capabilities.
-
-Capabilities MUST follow applicable principles and pillar direction.
 
 ### Features
 
@@ -88,15 +74,11 @@ Features describe specific user-facing or system-facing behavior:
 - Configure a notification.
 - Import a data set.
 
-Feature specifications define concrete behavior and outcomes. Feature specifications are the most specific level of the hierarchy.
-
-Features MUST follow applicable principles, pillar direction, and capability contracts.
+Feature specifications define concrete behavior and outcomes—the most specific level of the hierarchy. Features MUST follow applicable principles and capability contracts.
 
 ### Inheritance and exceptions
 
 Higher-level specifications establish the default direction for lower-level specifications.
-
-Apply the following rules:
 
 1. A higher-level decision applies to all relevant lower-level specifications.
 2. Lower-level specifications MUST NOT silently contradict higher-level decisions.
@@ -105,62 +87,27 @@ Apply the following rules:
 5. An exception requires explicit acceptance. An implementation agent MUST NOT create an exception independently.
 6. An accepted exception applies only within its stated scope. An exception does not silently change the higher-level decision.
 
-A lower-level specification does not need to repeat every applicable higher-level rule. However, important constraints should remain recognizable in the lower-level document's own prose.
+Important constraints should remain recognizable in lower-level prose without repeating every higher-level rule.
 
-For example:
+Example: user-data-under-user-control (principle) → sharing capability → share-document feature; any exception MUST be explicit and justified.
 
-A product-wide principle establishes that user data remains under user control. A data-management pillar defines ownership and access rules. A sharing capability defines reusable sharing behavior. A feature defines a particular sharing workflow.
+## Writing style
 
-The feature follows the established direction. If a feature requires an exception, the exception must be explicit and justified.
+A specification is written for probabilistic agents who may read it once, partially, and under pressure.
 
-### Choosing a level
+**Be specific** The verdict is always pass or fail without deliberation. Vague principles ("handle errors gracefully", "keep it simple") license everything and detect nothing so deviance becomes indistinguishable from compliance. Good: "Clients may only branch on `code`; providing any other variance in error responses is illegal," with the exact violating string (`"detail": "pq: duplicate key value violates unique constraint"`) beside the compliant one. Bad: "errors should be consistent and informative."
 
-Choose the highest level that accurately represents the scope of the decision.
+**Issue verdicts** Write in the imperative present, never self-argued. A verdict followed by its defense reads as if the verdict needed defending, and what needs defending sounds negotiable. "Was rejected" reports a debate; "is banned" is law. Keep the rationale in its own sentence for the reader applying the rule's spirit; never fuse verdict and defense into one sentence. Good: "Occurrence-varying `detail` is banned: prose must not vary." Bad: "Occurrence-varying `detail` was rejected because prose that varies gets parsed and the scrutiny burden is lighter when nothing varies."
 
-Ask:
+**Never ban without the replacement.** Agents never do well with a lack; a ban without a replacement leaves a vacuum the next agent fills with improvisation. The banned `detail` override was re-added repeatedly until the replacements were named. "Never do this" is half a law; "instead, do this" completes it. Good: "Instead of injecting the value into `detail`, add a catalog code; instead of diagnostics in the response, log them server-side." Bad: "Never inject dynamic content into error responses."
 
-- Does the decision apply across the entire product? Use a principle or position.
-- Does the decision establish direction for a major product area? Use a pillar.
-- Does the decision describe reusable behavior or a shared contract? Use a capability.
-- Does the decision describe a specific workflow or outcome? Use a feature.
-
-Do not create documents solely to fill a level. A small product may have few pillars or capabilities. A capability may serve several pillars. The hierarchy should reflect actual decision scope, not an organizational ideal.
-
-## Principles
-
-A principle is product law written for probabilistic agents who may read it once, partially, and under pressure.
-
-**Specific enough to judge on sight.** Given a real response, a real line of code, a real diff, the verdict is pass or fail without deliberation. Vague principles ("handle errors gracefully", "keep it simple") license everything and detect nothing; deviance becomes indistinguishable from compliance. Good: "Clients may only branch on `code`; providing any other variance in error responses is illegal," with the exact violating string (`"detail": "pq: duplicate key value violates unique constraint"`) beside the compliant one. Bad: "errors should be consistent and informative."
-
-**Verdicts in the imperative present, never self-argued.** A verdict followed by its defense reads as if the verdict needed defending, and what needs defending sounds negotiable. "Was rejected" reports a debate; "is banned" is law. Keep the rationale in its own sentence for the reader applying the rule's spirit; never fuse verdict and defense into one sentence. Good: "Occurrence-varying `detail` is banned: prose must not vary." Bad: "Occurrence-varying `detail` was rejected because prose that varies gets parsed and the scrutiny burden is lighter when nothing varies."
-
-**Never ban without the replacement.** Agents do not do well with a lack; a ban without a replacement leaves a vacuum the next agent fills with improvisation. The banned `detail` override was re-added repeatedly until the replacements were named. "Never do this" is half a law; "instead, do this" completes it. Good: "Instead of injecting the value into `detail`, add a catalog code; instead of diagnostics in the response, log them server-side." Bad: "Never inject dynamic content into error responses."
-
-**Never hedge.** Every hedge ("where possible", "generally", "preferably", "where the toolchain allows") is a hole in the rule, and an agent under pressure finds it and drives the feature through. A genuine exception is stated explicitly, scoped, and accepted (see Inheritance and exceptions) — never smuggled in as a modal verb. Good: "Catalog literals are the only source, enforced with compile-time-constant types." Bad: "…enforced with compile-time-constant types where the toolchain allows."
-
-**Rationale and examples serve recognition, not persuasion.** The document does not make a point; it makes the medicine sweet. The why and the pass/fail pairs exist so the rule's keywords recur naturally across the prose — an agent who meets the concept anywhere meets the same verdict. Good: verdicts flanked by real violating strings and real call sites. Bad: a rationale that re-proves the rule.
+**Hedging is poison** Every hedge ("where possible", "generally", "preferably", "where the toolchain allows") is a hole in the rule, and an agent under pressure finds it and drives the feature through. A genuine exception is stated explicitly, scoped, and accepted (see Inheritance and exceptions) — never smuggled in as a modal verb. Good: "Catalog literals are the only source, enforced with compile-time-constant types." Bad: "…enforced with compile-time-constant types where the toolchain allows."
 
 **Never list as open a question the document has answered.** An open question re-litigates the rule inside its own document. A violation is not a question; record it as a violation. A gap in enforcement is not a question; record it as a gap. Only genuinely undecided product decisions belong in Open Questions.
 
----
-
-## Writing specifications
-
 ### Choose the purpose
 
-Organize specifications around how the information will be used, rather than forcing every document into a rigid technical type.
-
-Common purposes include:
-
-- Product behavior: features, workflows, user-visible outcomes, and API behavior.
-- System design: architecture, component responsibilities, dependencies, and boundaries.
-- Contracts: interfaces, protocols, data formats, and compatibility.
-- Constraints: security, performance, platform support, and architectural invariants.
-- Changes: migrations, deprecations, compatibility transitions, and bug fixes.
-
-A document may serve several purposes. Use the organization that makes the content easiest to understand and maintain. Do not create categories merely to classify documents.
-
-Purpose and hierarchy level are separate decisions: a security constraint may be a product-wide principle, a pillar decision, or a feature-specific requirement.
+Organize specifications around how the information will be used. A document may serve several purposes. Do not create categories merely to classify documents. Purpose and hierarchy level are separate decisions.
 
 ### Describe desired state
 
@@ -174,82 +121,58 @@ Do not include:
 - Current implementation defects.
 - Incidental implementation details.
 
-Include technical constraints when those constraints are intentional decisions about the desired system. A required protocol, database capability, runtime, or public interface can be normative. A current module layout or variable name generally is not.
+Intentional technical constraints are normative (required protocol, database capability, runtime, public interface). Incidental layout and variable names are not.
 
 ### Preserve reasoning
 
-Important decisions should include their rationale.
+Important decisions include rationale: why the decision exists, what problem it addresses, when it applies. Use recognizable concepts so agents identify the decision at temptation. Do not restate the rule as its rationale. Do not invent artificial keyword lists or require a formal rule/rationale/example tuple—dense recurrence across prose is enough.
 
-Explain why a decision exists, what problem the decision addresses, and which circumstances make the decision relevant. Use recognizable concepts and terminology throughout the prose so future agents can identify when the decision applies.
+Definitions, background, diagrams, and straightforward requirements can stand without rationale. Laws and contested decisions cannot.
 
-Do not create artificial keyword lists or require a formal rule/rationale/example tuple.
-
-Do not merely restate a rule as its rationale.
-
-For example: authentication logic must remain independent of the HTTP framework. Authentication is shared by HTTP handlers, background workers, and command-line tools; a framework dependency would prevent those environments from using the same authentication logic. A new authentication feature must not introduce a dependency on the HTTP handler framework into the shared authentication crate.
-
-Not every statement needs a rationale. Definitions, background, diagrams, and straightforward requirements can stand on their own.
+Example: authentication logic must remain independent of the HTTP framework. Authentication is shared by HTTP handlers, background workers, and command-line tools; a framework dependency would prevent those environments from using the same authentication logic. A new authentication feature must not introduce a dependency on the HTTP handler framework into the shared authentication crate.
 
 ### Write for retrieval
 
-Agents are probabilistic: a rule survives only if recognized at the moment of temptation. Write for that moment.
+This skill wants retrieval ammo. Agents are probabilistic: a rule survives only if recognized at the moment of temptation.
 
-**Compress.** Short documents get read; long ones get sampled. A sentence that neither states, justifies, nor demonstrates a rule is deleted.
+**Compress.** Short documents get read; long ones get sampled. A sentence that neither states, justifies, nor demonstrates a rule is deleted. Make three sentences into one. Rule, rationale, and examples are not debate—they are keyword coverage; we're making the medicine sweet.
 
 **Dense keywords.** The rule's vocabulary recurs across rule, rationale, and examples — including the words an agent holds at the moment of temptation: the library name, the flag, the synonym. "Detail override" catches the agent typing `detail`; "injection" catches the one constructing a string. A rule stated once, under one name, is found by no one.
 
-**Name the outcomes.** Comply: a contract clients rely on. Violate: the banned parameter is re-added, the schema leaks, the client breaks. The failure mode's name is the keyword an agent reaches for when the failure recurs.
+**Name the outcomes.** The failure mode's name is the keyword an agent reaches for when the failure recurs.
 
 ### Write clear requirements
 
-Use direct, normative language for mandatory behavior:
+Use direct, normative language:
 
 - MUST / MUST NOT for requirements and prohibitions.
 - SHOULD for recommendations where justified exceptions exist.
 - MAY for permitted choices.
 
-EARS is useful for conditional requirements:
+EARS is useful for conditionals:
 
 - WHEN an event occurs, the system SHALL respond in a defined way.
 - WHILE a condition holds, the system SHALL maintain a defined behavior.
 - IF an unwanted condition occurs, the system SHALL handle it in a defined way.
 
-Use structured language where it improves precision. Do not force every sentence into EARS.
+Use structured language where it improves precision. Do not force every sentence into EARS. Requirements MUST be clear, necessary, consistent, and verifiable—not vague ("handle errors gracefully", "respond quickly") unless behavior or measurement is defined. Keep requirements focused; do not fragment unnecessarily.
 
-Requirements should be clear, necessary, consistent, and verifiable. Avoid vague requirements such as "handle errors gracefully" or "respond quickly" unless the intended behavior or measurement is defined.
-
-Keep individual requirements focused. Do not fragment requirements unnecessarily.
-
-**Named, not numbered.** Requirements are named, not numbered, so citations stay stable as the document changes: a number is an unstable identifier — one insertion renumbers every requirement after it, and every comment, test, or review that cited the old number points at the wrong rule or at nothing. A name survives reordering. Good — cite "Adapters live in the port" or "the batch law"; bad — cite "R7", which becomes "R8" after one edit and erodes trust in every document that referenced it.
+**Named, not numbered.** Requirements are named, not numbered, so citations stay stable: a number is an unstable identifier—one insertion renumbers every requirement after it, and every comment, test, or review that cited the old number points at the wrong rule or at nothing. A name survives reordering. Good — cite "Adapters live in the port" or "the batch law"; bad — cite "R7", which becomes "R8" after one edit and erodes trust in every document that referenced it.
 
 ### Use examples carefully
 
-Include examples when examples help distinguish intended behavior from plausible alternatives.
-
-Examples illustrate requirements; examples do not automatically create additional requirements. Make that distinction clear when necessary.
-
-Use concrete examples that reinforce the important concepts in the associated rule and rationale.
-
-Do not require every rule to have an example.
+Examples distinguish intended behavior from plausible alternatives. They illustrate requirements; they do not create additional requirements unless stated. Reinforce the rule's concepts. Do not use violating examples as if compliant. Do not require an example on every rule.
 
 ### Include relevant boundaries
 
-Use non-goals, assumptions, constraints, and failure behavior when they clarify the intended system.
-
-In particular:
+Use non-goals, assumptions, constraints, and failure behavior when they clarify the intended system:
 
 - Record material assumptions rather than presenting assumptions as accepted decisions.
 - Identify unresolved decisions instead of allowing implementation agents to invent answers.
 - Describe important failure and unwanted behavior, not only successful operation.
 - Include non-goals when likely interpretations could expand scope.
 
-**Non-goals** must not name other specification files, paths, or folders; a
-non-goal uses only ideas that belong to this specification's subject. Naming
-other files turns the section into an index and defines this page by what lives
-elsewhere; a refusal stated as a property of this subject stays meaningful on
-its own. Good: "This surface does not host multi-panel docking workspaces."
-Bad: "Does not cover projects/ or the-shell/." Bad: "See projects.md for
-workshops."
+**Non-goals** must not name other specification files, paths, or folders; a non-goal uses only ideas that belong to this specification's subject. Naming other files turns the section into an index and defines this page by what lives elsewhere; a refusal stated as a property of this subject stays meaningful on its own. Good: "This surface does not host multi-panel docking workspaces." Bad: "Does not cover projects/ or the-shell/." Bad: "See projects.md for workshops."
 
 Do not add empty sections or boilerplate simply to satisfy a template.
 
@@ -269,255 +192,100 @@ Every specification MUST contain the following headings, in this order:
 8. `## Alternatives and Trade-offs`
 9. `## Open Questions`
 
-Additional headings and subheadings are permitted. Use additional headings when they make the document easier to understand, navigate, or maintain. Do not omit, rename, or reorder the required headings.
+Do not omit, rename, or reorder required headings. Additional headings are permitted beneath this structure.
 
-The headings have distinct purposes:
+**Design** vs **Requirements**: Design is the accepted mental model; Requirements are the normative MUST / MUST NOT / SHOULD / MAY. Do not bury obligations in design prose.
 
-- **Summary** gives a concise statement of the specification's subject and intended outcome. A reader should understand the central direction without first reading the entire document.
-- **Purpose and Motivation** explains why the specification exists, what problem or need it addresses, and why the subject matters.
-- **Scope** establishes what the specification covers and, where useful, what it does not cover. Identify the relevant system boundaries and affected areas. Non-goals follow "Include relevant boundaries".
-- **Design** explains the accepted conceptual model, structure, approach, and important interactions. Give readers the understanding needed to interpret the requirements. This section describes the intended design, not incidental implementation details.
-- **Requirements** states the normative obligations. Use direct, precise, verifiable language. This section is the authoritative statement of required behavior and constraints.
-- **Considerations** explains relevant consequences, constraints, failure conditions, compatibility concerns, operational concerns, and other factors needed to understand or evaluate the design.
-- **Alternatives and Trade-offs** records meaningful alternatives and explains why the accepted direction was chosen. Include drawbacks and costs of the accepted approach where relevant.
-- **Open Questions** records decisions that remain unresolved and must not be invented by an implementation agent.
-
-The separation between **Design** and **Requirements** is intentional. Design explains the accepted approach and establishes a useful mental model. Requirements state what the system MUST, MUST NOT, SHOULD, or MAY do. Do not bury normative obligations in explanatory design prose.
-
-The headings do not require every specification to contain the same amount of material. A section may be concise when the subject needs little explanation. Do not add empty boilerplate simply to satisfy the structure.
-
-The required headings provide predictable locations for agents and make structural validation possible. Additional headings may organize complex subjects beneath the required structure.
+A section may be concise. Do not add empty boilerplate. Required headings give agents predictable locations and enable structural validation.
 
 ### Order content by confidence
 
-Within a document, arrange material in descending order of confidence and authority.
+Hard, accepted decisions MUST appear before guidance, suggestions, and speculation. The required structure encodes the order: **Design** and **Requirements** carry accepted direction, **Considerations** carries consequences, **Alternatives and Trade-offs** carries the rejected, **Open Questions** carries the unresolved. Do not present speculation as accepted design. Do not place unresolved proposals among mandatory requirements.
 
-Hard, accepted decisions MUST appear before guidance, suggestions, and speculative material.
-
-Use this general order:
-
-1. Accepted decisions and mandatory requirements.
-2. Established design direction and supported recommendations.
-3. Illustrative examples and possible approaches.
-4. Speculative ideas, hypotheses, and exploratory discussion.
-5. Unresolved questions.
-
-The required structure encodes the order: **Design** and **Requirements** carry accepted direction, **Considerations** carries consequences, **Alternatives and Trade-offs** carries the rejected, **Open Questions** carries the unresolved. Do not present a speculative approach as accepted design. Do not place an unresolved proposal among mandatory requirements.
-
-Where a section needs to discuss both established and uncertain material, use subheadings to distinguish the two. Put accepted decisions and established direction before exploratory discussion.
+When a section mixes established and uncertain material, subhead: accepted first.
 
 ### Move material when confidence changes
 
-Ordering is active maintenance. Promote accepted decisions into higher-confidence sections; demote uncertain, disputed, or invalidated material out of the authoritative requirements; place new speculation below established direction. Never leave material in chronological order because it was added later: the strongest direction is the first direction an agent encounters.
+Ordering is active maintenance. Promote accepted decisions; demote disputed or invalidated material; park new speculation below established direction. Never leave chronological order because text was added later: the strongest direction is the first direction an agent encounters.
 
 ## Document organization
 
 ### Keep documents understandable
 
-A specification should communicate its own purpose, decisions, and rationale without requiring an agent to discover an extensive network of other documents.
-
-Explain important relationships locally. Avoid references that depend on document numbers, exact titles, or fixed directory positions.
-
-References are useful for navigation, but should not be required to understand the central rules.
+A specification communicates its own purpose, decisions, and rationale without forcing an agent through an extensive document network. Explain important relationships locally. References may navigate; they MUST NOT be required to understand central rules. Avoid references that depend on document numbers, exact titles, or fixed directory positions.
 
 ### Avoid competing authority
 
-Give each decision one authoritative home.
-
-Other specifications may explain how a capability is used or how components interact. Do not copy the original decision into multiple documents.
-
-For example, a feature specification may state that an operation requires an authenticated account. The authentication capability defines the authentication contract.
-
-A lower-level specification may explain the relevant higher-level direction without reproducing the entire higher-level specification.
+Give each decision one authoritative home. Other specifications may explain use or interaction; do not copy the original decision. A feature may state that an operation requires an authenticated account; the authentication capability defines the contract. Lower levels may apply higher-level direction without reproducing it entire.
 
 ### Check consistency
 
-Review specifications for conflicting decisions, assumptions, boundaries, and requirements.
-
-Pay particular attention to the hierarchy:
-
-- Does a lower-level specification follow applicable higher-level direction?
-- Does a lower-level specification introduce an exception?
-- Is the exception explicitly justified and accepted?
-- Does a proposed lower-level decision accidentally weaken a product-wide principle?
-- Are shared capabilities consistent with the pillars and features that use them?
-
-Do not assume individually valid requirements form a valid system. Resolve contradictions and important gaps before implementation.
-
-Avoid creating registries, dependency graphs, or cross-reference systems unless the repository has a practical need for them.
+Review for hierarchy conflicts, unjustified exceptions, weakened principles, and capability drift. Individually valid requirements can still form an invalid system—resolve contradictions and gaps before implementation. Avoid registries, dependency graphs, or cross-reference systems unless the repository has a practical need.
 
 ## Editing specifications
 
 ### Make focused changes
 
-Prefer surgical edits. Preserve unrelated decisions and rationale.
+Prefer surgical edits. Preserve unrelated decisions and rationale. Restructure when organization, purpose, or meaning is wrong—do not preserve obsolete or contradictory text merely to minimize the diff.
 
-Restructure or rewrite a document when necessary to correct its organization, purpose, or meaning. Do not preserve obsolete or contradictory text merely to minimize the diff.
+Never rewrite a specification wholesale to make a targeted change. A full-file rewrite paraphrases every sentence it does not deliberately touch, and paraphrase silently drops content—rules, qualifiers, and rationale that were load-bearing. Default to edits; rewrite only with a diff review that proves no content was lost.
 
-Never rewrite a specification wholesale to make a targeted change. A full-file rewrite paraphrases every sentence it does not deliberately touch, and paraphrase silently drops content - rules, qualifiers, and rationale that were load-bearing. Default to edits; rewrite only with a diff review that proves no content was lost.
-
-When editing, also check whether the change affects:
-
-- The document's hierarchy level.
-- Its required headings and ordering.
-- The confidence ordering of its content.
-- Its relationship to higher-level decisions.
-- Any explicitly accepted exceptions.
+When editing, check hierarchy level, required headings, confidence ordering, higher-level relationships, and accepted exceptions.
 
 ### Do not turn specifications into history
 
-Do not add implementation notes, completion reports, test results, change logs, or development history.
-
-Use version control and project-management documents for those purposes.
+Do not add implementation notes, completion reports, test results, change logs, or development history. Use version control and project-management documents for those.
 
 ### Do not silently adopt implementation behavior
 
-When implementation behavior conflicts with a specification, do not change the specification merely to match the code.
-
-Determine whether the implementation is incorrect or whether the desired behavior needs to change.
-
-A specification may change when an explicit product or design decision establishes a different desired outcome. Record the reasoning for meaningful changes.
+When implementation conflicts with a specification, do not change the specification merely to match the code. Decide whether the implementation is wrong or the desired behavior changed. A specification changes only on an explicit product or design decision; record the reasoning.
 
 ### Commit specification changes separately
 
-Specification changes MUST be committed separately from implementation changes.
+Specification changes MUST be committed separately from implementation changes. A commit that changes files under `./specs` MUST NOT also contain code implementation changes. An implementation commit MUST NOT contain specification changes.
 
-A commit that changes files under `/specs` MUST NOT contain code or implementation changes.
-
-An implementation commit MUST NOT contain specification changes.
-
-For a change that requires both specification and implementation updates, use separate commits:
-
-1. **Specification commit:** establishes or revises the accepted desired behavior.
-2. **Implementation commit:** implements that behavior without modifying specifications.
-
-If implementation work reveals a missing or incorrect decision, stop implementation at that decision boundary. Obtain approval, make and commit the specification change, then continue implementation in a separate commit.
-
-Do not combine specification changes with code changes merely to keep a feature in one commit.
-
-This separation makes the history auditable: reviewers can distinguish changes to intended behavior from changes that implement intended behavior.
+If implementation reveals a missing or incorrect decision, stop at that boundary. Obtain approval, commit the specification change, then continue implementation in a separate commit. Do not combine specs and code merely to keep a feature in one commit—history must distinguish intended behavior from its implementation.
 
 ## Implementing from specifications
 
-Before implementing a change:
-
-1. Read the relevant specification in full.
-2. Read relevant supporting material and dependencies.
-3. Identify applicable decisions, requirements, and constraints.
-4. Determine the specification's hierarchy level.
-5. Identify applicable higher-level direction.
-6. Check whether the requested behavior is sufficiently specified.
-7. Identify any accepted exceptions that apply.
-
-During implementation:
-
-- Implement specified behavior rather than inventing product behavior.
-- Do not weaken requirements to simplify implementation.
-- Do not treat existing implementation behavior as proof of intended behavior.
-- Keep incidental implementation details in code, tests, or implementation documentation.
-- Stop and request clarification when a material product or design decision is missing or ambiguous.
-- Do not create an exception to a higher-level decision without explicit acceptance.
-
-If implementation work reveals a missing or incorrect decision, propose the decision and explain the consequences. Obtain approval before changing desired behavior. Update and commit the specification before implementation of the accepted decision, using separate commits.
-
-Not every implementation detail needs a specification requirement. Specifications govern intended behavior, contracts, and meaningful constraints—not every line of code.
+Read the relevant specification in full, plus applicable higher-level direction and accepted exceptions. Implement specified behavior; do not invent product behavior, weaken requirements, or treat existing code as proof of intent. Stop when a material decision is missing or ambiguous—no unilateral exceptions. Missing decision: propose, obtain approval, commit the specification change, then implement in a separate commit. Specifications govern intended behavior, contracts, and meaningful constraints—not every line of code.
 
 ## Verification and review
 
-Verification asks whether implementation satisfies the specification. Validation asks whether the specification describes the intended system.
+**Verification** asks whether implementation satisfies the specification. **Validation** asks whether the specification describes the intended system.
 
-Use appropriate evidence:
+Evidence: tests, static analysis, benchmarks, inspection, formal analysis where justified. Keep useful links from requirements to evidence; no mandated identifier scheme.
 
-- Tests for executable behavior.
-- Static analysis for enforceable code constraints.
-- Benchmarks for performance requirements.
-- Inspection and review for architectural and semantic requirements.
-- Formal analysis where justified.
-
-Maintain useful connections between requirements and verification evidence. Do not require a particular identifier scheme or test naming convention.
-
-Review specifications and implementations for:
-
-- Ambiguous or unverifiable requirements.
-- Missing failure behavior.
-- Contradictions and incomplete decisions.
-- Unsupported assumptions.
-- Lost or unclear rationale.
-- Accidental implementation details.
-- Duplicated or competing authority.
-- Incorrect hierarchy placement.
-- Lower-level decisions that conflict with higher-level direction.
-- Unjustified or unaccepted exceptions.
-- Speculative material appearing above established decisions.
-- Implementation changes that silently redefine desired behavior.
-
-A specification review should establish whether the document is ready to guide implementation, not merely whether the document is well formatted.
+Review for: ambiguous or unverifiable requirements; missing failure behavior; contradictions and incomplete decisions; unsupported assumptions; lost rationale; accidental implementation details; competing authority; wrong hierarchy placement; lower-level conflict with higher-level direction; unjustified exceptions; speculation above established decisions; implementation that silently redefines desired behavior. Ready to guide implementation beats well-formatted.
 
 ## Enforcement
 
-Skills provide guidance, not deterministic enforcement. Do not claim a skill can refuse or prevent an action unless the execution environment actually enforces that restriction.
-
-Use automated gates where checks are reliable. Use human or agent review for semantic checks that cannot be reliably automated.
-
-Recommended repository checks:
+Skills provide guidance, not deterministic enforcement. Do not claim a skill can refuse or prevent an action unless the execution environment actually enforces that restriction. Automated gates for reliable checks; human or agent review for semantic checks.
 
 | Check | Passing outcome |
 |---|---|
-| Specification location | Every specification file is under `/specs`. |
+| Specification location | Every specification file is under `./specs` for the relevant product. |
 | Document structure | Every specification contains the required headings in the required order. Additional headings are allowed. |
 | Document formatting | Specification documents follow the repository's formatting rules. |
 | Local references | Local references resolve when references are used. |
-| Specification commit | A commit changing `/specs` contains no code or implementation changes. |
+| Specification commit | A commit changing `./specs` contains no code implementation changes. |
 | Implementation commit | A commit changing implementation files contains no specification changes. |
 | Automated verification | Required automated tests and static analysis pass. |
 
-The checks above provide concrete pass/fail outcomes for repository structure, document structure, commit contents, and automated verification.
-
-Semantic review remains necessary for matters such as:
-
-- Whether a document belongs at the correct hierarchy level.
-- Whether the design follows higher-level direction.
-- Whether an exception is necessary, justified, and accepted.
-- Whether requirements are clear and verifiable.
-- Whether rationale explains the decision rather than repeating it.
-- Whether important concepts are recognizable throughout the prose.
-- Whether speculative material is clearly separated from accepted direction.
-- Whether the specification describes the intended system.
-
-Do not substitute mechanical keyword counts for semantic review. A vocabulary list can help trigger review, but cannot establish whether a rule was followed.
+Semantic review (not keyword counts): correct hierarchy level, higher-level direction followed, exceptions justified and accepted, requirements verifiable, rationale real, concepts recognizable, speculation separated, specification describes the intended system.
 
 A reviewer detects problems; a CI gate can block a change; permissions can prevent unauthorized edits. These are different levels of control.
 
 ## Agent responsibilities
 
-Agents must:
-
 - Read relevant specifications before changing governed behavior.
-- Preserve the reasoning behind important decisions.
-- Recognize that specifications describe desired state.
-- Apply higher-level direction to lower-level work.
-- Identify and justify exceptions rather than silently introducing them.
-- Keep important concepts recognizable throughout the prose.
-- Move speculative material below established direction.
-- Avoid inventing unspecified product behavior.
-- Ask for clarification when important decisions are missing.
-- Update specifications when an explicitly accepted decision changes desired behavior.
-- Keep implementation progress and incidental details out of specifications.
-- Commit specification changes separately from implementation changes.
+- Preserve rationale; keep concepts recognizable; desired state only—no progress or incidental detail in specs.
+- Apply higher-level direction; justify exceptions explicitly; never invent unspecified product behavior.
+- Move speculation below established direction.
+- Ask when decisions are missing; update specs only on accepted decision changes; commit specs separately from implementation.
 
-Reviewers should evaluate the specification and implementation together, rather than treating passing tests as proof of correctness.
+Reviewers evaluate specification and implementation together. Passing tests are not proof of correctness.
 
 ## Reference methods
 
-Use established requirements-engineering practices where useful:
-
-- EARS for structured requirements.
-- INCOSE guidance for writing requirements.
-- ISO/IEC/IEEE 29148 for requirements engineering.
-- Specification by Example for connecting requirements with concrete behavior.
-
-These methods inform the work. They do not require a particular document taxonomy, template, or repository structure.
-
----
-
-Specifications preserve desired behavior and the reasoning behind it. Principles establish product-wide direction. Pillars apply that direction to major areas. Capabilities define reusable behavior. Features define specific outcomes. Plans describe intended work. Status describes progress. Implementations follow specifications, and explicit decisions—not accidental implementation behavior—change them.
+Useful when needed: EARS, INCOSE guidance, ISO/IEC/IEEE 29148, Specification by Example. They inform the work; they do not mandate taxonomy, template, or repository structure.

@@ -235,7 +235,19 @@ Older findings still matter for older versions and historical investigation. Nev
 - **Obsolete** by marking in-statement applicability; preserve the historical finding.
 - **Delete** only when continued existence is harmful or removal is explicitly authorized; remove the `AGENTS.md` entry in the same change.
 
-## Agent checklist
+## Protect the collection
+
+Never run formatters, doc generators, or cleanup over `.agents/references/` if they rewrite bodies. Never replace files with generated summaries. Never broad search-and-replace without inspecting every affected passage. Narrow patches; inspect the diff.
+
+References need no universal template. CLI notes, protocol notes, dependency bugs, and code patterns differ. Shared requirements only: evidence, useful specifics, discoverability, preservation, confidence order. Never empty boilerplate sections.
+
+References preserve evidence. They never make the product decision—follow specification and issue process for product direction and implementation work.
+
+## Agent instructions
+
+Ensure AGENTS.md includes requirements at least as strong as the following, or propose to the user adding the requirements if missing:
+
+"Agents require explicit user approval of exact proposed changes before any file under .agents/references/ or its AGENTS.md entry is created, edited, renamed, or removed. Reviewers are required to verify reference changes comply with the `external-references` skill: surgical edits only, preservation of findings and evidence, honest example labels, and exactly one matching AGENTS.md entry per reference."
 
 When a reference file or its `AGENTS.md` entry changes:
 
@@ -246,11 +258,3 @@ When a reference file or its `AGENTS.md` entry changes:
 5. Valid front matter `name` and `description`; accurate; retrieval vocabulary; no false promises. New findings do not automatically require a new description.
 6. Exactly one matching `AGENTS.md` entry; link, name, description exact; update on create/rename/remove/metadata change.
 7. Before finish: YAML syntax; links resolve; every reference file has an entry and every entry has a file; names/descriptions match; no silent removal of findings; corrections preserve earlier findings; external findings keep source links; documented vs observed vs inferred stay distinct; version/env where relevant; no local constants introduced; every false or superseded statement self-labels without relying on a heading; confidence order holds; example labels honest; never mark verified without a real test; complete diff shows no unintended rewrite. Report unverified examples, unresolved questions, and sources that could not be fetched.
-
-## Protect the collection
-
-Never run formatters, doc generators, or cleanup over `.agents/references/` if they rewrite bodies. Never replace files with generated summaries. Never broad search-and-replace without inspecting every affected passage. Narrow patches; inspect the diff.
-
-References need no universal template. CLI notes, protocol notes, dependency bugs, and code patterns differ. Shared requirements only: evidence, useful specifics, discoverability, preservation, confidence order. Never empty boilerplate sections.
-
-References preserve evidence. They never make the product decision—follow specification and issue process for product direction and implementation work.

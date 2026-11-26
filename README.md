@@ -57,12 +57,12 @@ npx skills add \
 ### Install one or more skills (project scope, OpenCode)
 
 Pin a **tag**. Estate skills use per-skill tags `<skill-id>/vMAJOR.MINOR.PATCH`
-(example: `forgejo/v0.2.0`, `external-references/v0.2.0`). Older catalog-wide
+(example: `forgejo/v0.2.2`, `external-references/v0.2.0`). Older catalog-wide
 tags `v0.1.0`–`v0.6.0` still exist but are not the pattern for new releases.
 
 ```bash
 # GitHub mirror + per-skill tag (typical for npx skills)
-npx skills add 'softwarepatterns/agents-setup@forgejo/v0.2.0' \
+npx skills add 'softwarepatterns/agents-setup@forgejo/v0.2.2' \
   -s forgejo -a opencode -y --full-depth
 
 npx skills add 'softwarepatterns/agents-setup@external-references/v0.2.0' \
@@ -74,7 +74,7 @@ npx skills add 'softwarepatterns/agents-setup@v0.6.0' \
 
 # Primary Forgejo over SSH + tag
 npx skills add \
-  'ssh://git@forgejo.softwarepatterns.com:2222/softwarepatterns/agents-setup.git@forgejo/v0.2.0' \
+  'ssh://git@forgejo.softwarepatterns.com:2222/softwarepatterns/agents-setup.git@forgejo/v0.2.2' \
   -s forgejo -a opencode -y --full-depth
 ```
 
@@ -120,12 +120,12 @@ gh skill install softwarepatterns/agents-setup
 
 # Install one skill, pin tag
 gh skill install softwarepatterns/agents-setup forgejo \
-  --pin forgejo/v0.2.0 \
+  --pin forgejo/v0.2.2 \
   --agent opencode \
   --scope project
 
 # Or skill@version form
-gh skill install softwarepatterns/agents-setup forgejo@forgejo/v0.2.0 \
+gh skill install softwarepatterns/agents-setup forgejo@forgejo/v0.2.2 \
   --agent opencode \
   --scope project
 ```
@@ -142,8 +142,8 @@ GitHub mirror.
 
 - **First-party skills:** `skills/` (docs, tools, rust, typescript, …)
 - **First-party OpenCode agents:** `agents/`
-- **References for consumers:** `agents/references/` (e.g. remotes, OpenCode skills layout)
-- **Vendored third-party skills:** `vendor/skills/<github-owner>/` — pin and provenance in each owner `README.md`
+- **References for consumers:** `agents/references/` (e.g. git remotes)
+- **Vendored third-party skills:** `vendor/skills/<github-owner>/` — pin and provenance in each skill's frontmatter `metadata`
 - **Rules for this repo:** `AGENTS.md` and `.agents/references/`
 
 ## Versioning skills

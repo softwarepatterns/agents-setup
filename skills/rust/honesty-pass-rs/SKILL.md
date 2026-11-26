@@ -1,5 +1,5 @@
 ---
-name: honesty-pass
+name: honesty-pass-rs
 description: Use when code must be forced into honest contracts. This skill defines mandatory rules for functions whose names, return types, and caller behavior do not agree.
 ---
 

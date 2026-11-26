@@ -211,7 +211,9 @@ Review for: ambiguous or unverifiable requirements; missing failure behavior; co
 - Move speculation below established direction.
 - Ask when decisions are missing; update specs only on accepted decision changes; commit specs separately from implementation.
 
-Reviewers evaluate specification and implementation together. Passing tests are not proof of correctness.
+Ensure AGENTS.md includes requirements at least as strong as the following, or propose to the user adding the requirements if missing:
+
+"Agents require explicit user approval of exact proposed changes before any specification file is edited. Reviewers are required to verify specification changes comply with the spec-driven-design skill, that all changes are in the appropriate sections, and that paragraphs are coherent, compressed, and consistent with the rest of the document."
 
 ## Reference methods
 
